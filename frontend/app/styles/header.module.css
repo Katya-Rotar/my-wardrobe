@@ -1,0 +1,17 @@
+.sidebar {
+   display: flex;
+   background-color: #161717;
+   border-radius: 20px;
+   flex-direction: column;
+   width: 55px;
+}
+
+.link{
+   display: flex;
+   align-items: center; 
+   justify-content: center;
+   width: 55px;
+   height: 55px;
+   border-radius: 20px;
+}
+
