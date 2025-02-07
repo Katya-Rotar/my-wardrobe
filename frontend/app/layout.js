@@ -9,16 +9,26 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <Header />
-        <br></br>
-        <CustomCalendar />
-        <br></br>
-        <WeatherWidget />
-        <br></br>
-        <UserProfile />
-        <br></br>
-        <SearchBar/>
-        {children}
+        <div className="grid-container">
+          <div className="grid-header">
+            <Header />
+          </div>
+          <div className="grid-userProfile">
+            <UserProfile />
+          </div>
+          <div className="grid-customCalendar">
+            <CustomCalendar />
+          </div>
+          <div className="grid-weatherWidget">
+            <WeatherWidget />
+          </div>
+          <div className="grid-searchBar">
+            <SearchBar />
+          </div>
+          <div className="grid-children">
+            {children}
+          </div>
+        </div>
       </body>
     </html>
   );
