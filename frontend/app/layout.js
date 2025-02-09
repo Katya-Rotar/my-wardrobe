@@ -16,10 +16,8 @@ export default function RootLayout({ children }) {
           <div className="grid-userProfile">
             <UserProfile />
           </div>
-          <div className="grid-customCalendar">
+          <div className="grid-calendarWeather">
             <CustomCalendar />
-          </div>
-          <div className="grid-weatherWidget">
             <WeatherWidget />
           </div>
           <div className="grid-searchBar">

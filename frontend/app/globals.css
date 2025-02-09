@@ -36,20 +36,29 @@ body {
   z-index: 1;
 }
 
-.grid-customCalendar {
+.grid-calendarWeather {
   grid-column: 17 / 22;
-  grid-row: 2 / 4; /* Займає 2 ряди */
+  grid-row: 2 / 10;
   justify-self: end;
   position: fixed;
-  top: 80px; /* Відступ зверху */
+  top: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  padding-right: 5px;
 }
 
-.grid-weatherWidget {
-  grid-column: 17 / 22;
-  grid-row: 8 / 10; /* Займає 2 ряди */
-  justify-self: end;
-  position: fixed;
-  top: 513px; /* Відступ зверху */
+.grid-calendarWeather .customCalendar {
+  flex: 1;
+  min-height: 280px;
+}
+
+.grid-calendarWeather .weatherWidget {
+  flex: 1;
+  min-height: 180px;
 }
 
 .grid-searchBar {
@@ -58,6 +67,7 @@ body {
   justify-self: left;
   position: fixed;
   left: 54px;
+  top: 9px;
 }
 
 .grid-children {
@@ -66,4 +76,10 @@ body {
   margin-left: 18px;
   margin-right: 38px;
   overflow: auto;
+}
+
+@media (max-width: 600px) {
+  .grid-searchBar {
+    left: 8px;
+  }
 }
