@@ -4,7 +4,7 @@
   border-radius: 20px;
   color: #ffffff;
   text-align: center;
-  padding: 15px;
+  padding: 12px;
   font-family: 'Chelsea Market', cursive;
 }
 
@@ -12,7 +12,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
 }
 
 .weather-header h2 {
@@ -28,7 +27,7 @@
 }
 
 .weather-main {
-  margin: 20px 0;
+  margin: 10px 0;
 }
 
 .day {
@@ -87,3 +86,24 @@
   font-weight: bold;
 }
 
+.weather-widget.compact {
+  width: 44px; 
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  background-color: #88AEDD;
+}
+
+.compact .weather-header {
+  justify-content: center;
+  margin-bottom: 0;
+}
+.compact .weather-header h2 {
+  display: none;
+}
+.compact .weather-main,
+.compact .weather-forecast {
+  display: none;
+}
