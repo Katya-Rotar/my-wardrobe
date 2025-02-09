@@ -1,8 +1,8 @@
 .calendarContainer {
-   width: 250px;
+   width: 270px;
    background-color: #628ECB;
    border-radius: 20px;
-   padding: 10px;
+   padding: 12px;
    color: #fff;
  }
  
@@ -10,7 +10,7 @@
    display: flex;
    justify-content: space-between;
    align-items: center;
-   margin-bottom: 15px;
+   margin-bottom: 10px;
  }
  
  .header h2 {
@@ -29,7 +29,7 @@
    display: flex;
    justify-content: space-between;
    align-items: center;
-   margin-bottom: 10px;
+   margin-bottom: 8px;
  }
  
  .dateButton {
@@ -57,4 +57,18 @@
    background: none;
  }
   
- 
+ .calendarContainer.compact {
+  width: 30px;
+  height: 21px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 21px;
+  background-color: #628ECB;
+}
+
+.compact{
+  justify-content: center;
+  margin-bottom: 0;
+  display: none;
+}
