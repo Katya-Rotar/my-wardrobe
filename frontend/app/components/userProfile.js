@@ -6,6 +6,7 @@ import EventCard from './eventCard';
 export default function UserProfile() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [isCompact, setIsCompact] = useState(false);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -15,15 +16,24 @@ export default function UserProfile() {
         setShowProfile(false);
       }
     };
-
+  
+    const handleResize = () => {
+      setIsCompact(window.innerWidth <= 768);
+    };
+    
+    handleResize();
+  
+    window.addEventListener("resize", handleResize);
     document.addEventListener("mousedown", handleClickOutside);
+  
     return () => {
+      window.removeEventListener("resize", handleResize);
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
   return (
-    <div className={styles['user-profile']} ref={dropdownRef}>
+    <div className={`${styles['user-profile']} ${isCompact ? styles.compact : ''}`} ref={dropdownRef}>
       <button
         className={styles['icon-button']}
         onClick={() => {
@@ -36,10 +46,12 @@ export default function UserProfile() {
 
       <div className={styles['user-info']}>
         <img src="/Image.png" alt="Uroos Fatima" className={styles['avatar']} />
-        <div className={styles['text-info']}>
-          <p className={styles['name']}>Uroos Fatima</p>
-          <p className={styles['email']}>uroos.design@gmail.com</p>
-        </div>
+        {!isCompact && (
+          <div className={styles['text-info']}>
+            <p className={styles['name']}>Uroos Fatima</p>
+            <p className={styles['email']}>uroos.design@gmail.com</p>
+          </div>
+        )}
       </div>
 
       <button
