@@ -13,7 +13,7 @@ const Header = () => {
             </Link>
          </div>
          <div className={styles.link}>
-            <Link href={"/"} legacyBehavior>
+            <Link href={"/wardrobe"} legacyBehavior>
                <a>
                   <Image src="/clothing.svg" alt="Clothing" width={20} height={20} />
                </a>
