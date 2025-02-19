@@ -24,7 +24,7 @@ body {
   position: fixed;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 1;
+  z-index: 5;
 }
 
 .grid-userProfile {
@@ -33,7 +33,7 @@ body {
   justify-self: end;
   position: fixed;
   top: 9px;
-  z-index: 1;
+  z-index: 10
 }
 
 .grid-calendarWeather {
@@ -49,6 +49,13 @@ body {
   max-height: calc(100vh - 100px);
   overflow-y: auto;
   padding-right: 5px;
+  z-index: 5; 
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.grid-calendarWeather::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 .grid-calendarWeather .customCalendar {
@@ -79,6 +86,13 @@ body {
   justify-content: flex-start;
   width: 100%;
   max-width: 1200px;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  z-index: 0;
+}
+
+.grid-children::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 
 @media (max-width: 1300px) {
