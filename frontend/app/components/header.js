@@ -1,47 +1,43 @@
-import Link from "next/link"
-import Image from "next/image"
-import styles from '../styles/Header.module.css'
+"use client";
+
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import styles from "../styles/header.module.css";
 
 const Header = () => {
-   return(
-      <nav className={styles.sidebar}>
-         <div className={`${styles.link} ${styles.home}`}>
-            <Link href={"/"} legacyBehavior>
-               <a>
-                  <Image src="/home.svg" alt="Home" width={20} height={20} />
-               </a>
-            </Link>
-         </div>
-         <div className={styles.link}>
-            <Link href={"/wardrobe"} legacyBehavior>
-               <a>
-                  <Image src="/clothing.svg" alt="Clothing" width={20} height={20} />
-               </a>
-            </Link>
-         </div>
-         <div className={styles.link}>
-            <Link href={"/"} legacyBehavior>
-               <a>
-                  <Image src="/wardrobe.svg" alt="Wardrobe" width={18} height={18} />
-               </a>
-            </Link>
-         </div>
-         <div className={styles.link}>
-            <Link href={"/"} legacyBehavior>
-               <a>
-                  <Image src="/socialNetwork.svg" alt="Social Network" width={20} height={20} />
-               </a>
-            </Link>
-         </div>
-         <div className={styles.link}>
-            <Link href={"/"} legacyBehavior>
-               <a>
-                  <Image src="/liked.svg" alt="Liked" width={20} height={20} />
-               </a>
-            </Link>
-         </div>
-      </nav>
-   )
-}
+  const pathname = usePathname();
 
-export default Header
+  const links = [
+    { href: "/", src: "/home.svg", alt: "Home" },
+    { href: "/wardrobe", src: "/clothing.svg", alt: "Clothing" },
+    { href: "/w", src: "/wardrobe.svg", alt: "Wardrobe" },
+    { href: "/s", src: "/socialNetwork.svg", alt: "Social Network" },
+    { href: "/l", src: "/liked.svg", alt: "Liked" },
+  ];
+
+  return (
+    <nav className={styles.sidebar}>
+      {links.map(({ href, src, alt }) => (
+        <div
+          key={href}
+          className={`${styles.link} ${
+            pathname === href ? styles.active : ""
+          }`}
+        >
+          <Link href={href}>
+            <Image
+              src={src}
+              alt={alt}
+              width={20}
+              height={20}
+              className={pathname === href ? styles.activeSvg : ""}
+            />
+          </Link>
+        </div>
+      ))}
+    </nav>
+  );
+};
+
+export default Header;
