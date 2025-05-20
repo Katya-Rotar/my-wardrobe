@@ -11,9 +11,7 @@ const Header = () => {
   const links = [
     { href: "/", src: "/home.svg", alt: "Home" },
     { href: "/wardrobe", src: "/clothing.svg", alt: "Clothing" },
-    { href: "/w", src: "/wardrobe.svg", alt: "Wardrobe" },
-    { href: "/s", src: "/socialNetwork.svg", alt: "Social Network" },
-    { href: "/l", src: "/liked.svg", alt: "Liked" },
+    { href: "/outfit", src: "/wardrobe.svg", alt: "Wardrobe" },
   ];
 
   return (
