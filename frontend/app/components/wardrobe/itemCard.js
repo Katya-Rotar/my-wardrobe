@@ -4,7 +4,7 @@ import "@/app/styles/wardrobe/itemCard.css";
 
 export default function ItemCard({ id, name, image }) {
   return (
-    <Link href={`/`} className="item-card">
+    <Link href={`/wardrobe/${id}`} className="item-card">
       <div className="item-content">
         <Image 
           src={image} 
