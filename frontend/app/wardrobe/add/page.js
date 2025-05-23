@@ -149,17 +149,17 @@ export default function AddItems() {
     }
   };
 
-  const renderButtons = (items, selectedItem, onSelect) =>
-    items.map((item) => (
-      <button
-        type="button"
-        key={item.id}
-        className={`white-btn ${selectedItem?.id === item.id ? "active" : ""}`}
-        onClick={() => onSelect(item)}
-      >
-        {item.name}
-      </button>
-    ));
+  const renderButtons = (items, selectedItem, onSelect, labelKey) =>
+      items.map((item) => (
+          <button
+              type="button"
+              key={item.id}
+              className={`white-btn ${selectedItem?.id === item.id ? "active" : ""}`}
+              onClick={() => onSelect(item)}
+          >
+            {item[labelKey]}
+          </button>
+      ));
 
   return (
     <div className="container">
@@ -207,7 +207,7 @@ export default function AddItems() {
           <div className="input-group">
             <label>Category</label>
             <div className="btn-group">
-              {renderButtons(categories, selectedCategory, setSelectedCategory)}
+              {renderButtons(categories, selectedCategory, setSelectedCategory, "categoryName")}
             </div>
           </div>
 
@@ -215,7 +215,7 @@ export default function AddItems() {
             <label>Type</label>
             <div className="btn-group">
               {types.length > 0 ? (
-                renderButtons(types, selectedType, setSelectedType)
+                renderButtons(types, selectedType, setSelectedType, "typeName")
               ) : (
                 <p>Please select a category first</p>
               )}
@@ -224,18 +224,18 @@ export default function AddItems() {
 
           <div className="input-group">
             <label>Style</label>
-            <div className="btn-group">{renderButtons(styles, selectedStyle, setSelectedStyle)}</div>
+            <div className="btn-group">{renderButtons(styles, selectedStyle, setSelectedStyle, "styleName")}</div>
           </div>
 
           <div className="input-group">
             <label>Season</label>
-            <div className="btn-group">{renderButtons(seasons, selectedSeason, setSelectedSeason)}</div>
+            <div className="btn-group">{renderButtons(seasons, selectedSeason, setSelectedSeason, "seasonName")}</div>
           </div>
 
           <div className="input-group">
             <label>Temperature Suitability</label>
             <div className="btn-group btn-group-large">
-              {renderButtons(temps, selectedTemp, setSelectedTemp)}
+              {renderButtons(temps, selectedTemp, setSelectedTemp, "temperatureSuitabilityName")}
             </div>
           </div>
         </div>

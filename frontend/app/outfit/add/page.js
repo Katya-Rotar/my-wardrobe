@@ -1,148 +1,204 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useRouter } from 'next/navigation';
+import api from "@/api/api"; // Якщо це окремий інстанс axios - класно
+import "./CreateOutfitPage.css"
+import "@/app/styles/wardrobe/itemCard.css";
 
-export default function CreateOutfitForm({ userId }) {
-  const [formData, setFormData] = useState({
-    userID: userId,
-    temperatureSuitabilityID: 1,
-    tagIDs: [],
-    styleIDs: [],
-    seasonIDs: [],
-    clothingItemIDs: [],
-    outfitGroupIDs: [],
-  });
+export default function CreateOutfitPage({ userId, outfitId  }) {
+    const router = useRouter();
+    
+    const [formData, setFormData] = useState({
+        userID: userId, // id користувача з пропсів
+        temperatureSuitabilityID: 1,
+        tagIDs: [],
+        styleIDs: [],
+        seasonIDs: [],
+        clothingItemIDs: [],
+    });
 
-  const [styles, setStyles] = useState([]);
-  const [seasons, setSeasons] = useState([]);
-  const [temps, setTemps] = useState([]);
-  const [tags, setTags] = useState([]);
-  const [clothingItems, setClothingItems] = useState([]);
-  const [outfitGroups, setOutfitGroups] = useState(null);
+    const [styles, setStyles] = useState([]);
+    const [seasons, setSeasons] = useState([]);
+    const [temps, setTemps] = useState([]);
+    const [tags, setTags] = useState([]);
+    const [clothingItems, setClothingItems] = useState([]);
+    const [filteredItems, setFilteredItems] = useState([]);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const [tagRes, styleRes, seasonRes, tempRes, clothingRes, groupRes] = await Promise.all([
-          axios.get('http://localhost:5000/api/Tag'),
-          axios.get('http://localhost:5000/api/Style'),
-          axios.get('http://localhost:5000/api/Season'),
-          axios.get('http://localhost:5000/api/TemperatureSuitability'),
-          axios.get('http://localhost:5000/api/ClothingItem?UserId=1')
-        ]);
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                // Завантажуємо всі потрібні дані одночасно
+                const [tagRes, styleRes, seasonRes, tempRes, clothingRes] = await Promise.all([
+                    api.get('/Tag'),
+                    api.get('/Style'),
+                    api.get('/Season'),
+                    api.get('/TemperatureSuitability'),
+                    api.get(`/ClothingItem`, { params: { UserId: userId } })
+                ]);
 
-        setTags(tagRes.data);
-        setStyles(styleRes.data);
-        setSeasons(seasonRes.data);
-        setTemps(tempRes.data);
-        setClothingItems(clothingRes.data);
-      } catch (error) {
-        console.error("Failed to fetch reference data:", error);
-      }
-    }
+                setTags(tagRes.data);
+                setStyles(styleRes.data);
+                setSeasons(seasonRes.data);
+                setTemps(tempRes.data);
+                setClothingItems(clothingRes.data);
+                setFilteredItems(clothingRes.data);
+                if (outfitId) {
+                    const outfitRes = await api.get(`/Outfit/${outfitId}`);
+                    const outfit = outfitRes.data;
 
-    fetchData();
-  }, []);
+                    console.log("Outfit data from backend:", outfit);
 
-  const handleChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+                    // Підставляємо отримані дані в форму
+                    setFormData({
+                        userID: userId,
+                        temperatureSuitabilityID: outfit.temperatureSuitabilityID,
+                        tagIDs: outfit.tagIDs || [],
+                        styleIDs: outfit.styleIDs || [],
+                        seasonIDs: outfit.seasonIDs || [],
+                        clothingItemIDs: outfit.clothingItemIDs || [],
+                    });
+                }
+            } catch (err) {
+                console.error('Failed request:', err);
+            }
+        }
+        fetchData();
+    }, [userId, outfitId]);
 
-  const handleMultiSelectChange = (field, options) => {
-    const values = Array.from(options).map(option => parseInt(option.value));
-    setFormData(prev => ({
-      ...prev,
-      [field]: values,
-    }));
-  };
+    // Функція для додавання/видалення id з масиву у formData
+    const toggleId = (field, id) => {
+        setFormData(prev => ({
+            ...prev,
+            [field]: prev[field].includes(id)
+                ? prev[field].filter(i => i !== id)
+                : [...prev[field], id],
+        }));
+    };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    // Видалення обраного елементу
+    const removeClothingItem = (id) => {
+        setFormData(prev => ({
+            ...prev,
+            clothingItemIDs: prev.clothingItemIDs.filter(itemId => itemId !== id)
+        }));
+    };
 
-    try {
-      const res = await axios.post('http://localhost:5000/api/Outfit', formData);
-      alert('Аутфіт успішно створено!');
-      console.log('Created:', res.data);
-    } catch (err) {
-      console.error(err);
-      alert('Помилка при створенні аутфіту.');
-    }
-  };
+    // Відправка форми на бекенд
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            if (outfitId) {
+                // Редагування: PUT-запит
+                await api.put(`/Outfit/${outfitId}`, formData);
+                alert('Аутфіт оновлено!');
+            } else {
+                // Створення: POST-запит
+                await api.post('/Outfit', formData);
+                alert('Аутфіт створено!');
+            }
+            router.push('/outfit');
+        } catch (err) {
+            console.error(err);
+            alert('Помилка при збереженні аутфіту.');
+        }
+    };
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <h2>Створити аутфіт</h2>
+    return (
+        <form className="create-outfit-layout" onSubmit={handleSubmit}>
+            {/* Ліва частина - фільтри і вибір даних про образ */}
+            <div className="sidebar-filters">
+                <h3>Style</h3>
+                {styles.map(s => (
+                    <button
+                        key={s.id}
+                        type="button"
+                        className={`filter-btn ${formData.styleIDs.includes(s.id) ? 'active' : ''}`}
+                        onClick={() => toggleId('styleIDs', s.id)}
+                    >
+                        {s.styleName}
+                    </button>
+                ))}
 
-      <label>Температурна відповідність:</label>
-      <select
-        value={formData.temperatureSuitabilityID}
-        onChange={e => handleChange('temperatureSuitabilityID', parseInt(e.target.value))}
-      >
-        {temps.map(temp => (
-          <option key={temp.id} value={temp.id}>
-            {temp.temperatureSuitabilityName}
-          </option>
-        ))}
-      </select>
+                <h3>Season</h3>
+                {seasons.map(s => (
+                    <button
+                        key={s.id}
+                        type="button"
+                        className={`filter-btn ${formData.seasonIDs.includes(s.id) ? 'active' : ''}`}
+                        onClick={() => toggleId('seasonIDs', s.id)}
+                    >
+                        {s.seasonName}
+                    </button>
+                ))}
 
-      <label>Теги:</label>
-      <select
-        multiple
-        value={formData.tagIDs.map(id => id.toString())}
-        onChange={e => handleMultiSelectChange('tagIDs', e.target.selectedOptions)}
-      >
-        {tags.map(tag => (
-          <option key={tag.id} value={tag.id}>
-            {tag.tagName}
-          </option>
-        ))}
-      </select>
+                <h3>Temperature</h3>
+                {temps.map(t => (
+                    <button
+                        key={t.id}
+                        type="button"
+                        className={`filter-btn ${formData.temperatureSuitabilityID === t.id ? 'active' : ''}`}
+                        onClick={() => setFormData(prev => ({ ...prev, temperatureSuitabilityID: t.id }))}
+                    >
+                        {t.temperatureSuitabilityName}
+                    </button>
+                ))}
 
-      <label>Стилі:</label>
-      <select
-        multiple
-        value={formData.styleIDs.map(id => id.toString())}
-        onChange={e => handleMultiSelectChange('styleIDs', e.target.selectedOptions)}
-      >
-        {styles.map(style => (
-          <option key={style.id} value={style.id}>
-            {style.styleName}
-          </option>
-        ))}
-      </select>
+                <h3>Tags</h3>
+                {tags.map(tag => (
+                    <button
+                        key={tag.id}
+                        type="button"
+                        className={`filter-btn ${formData.tagIDs.includes(tag.id) ? 'active' : ''}`}
+                        onClick={() => toggleId('tagIDs', tag.id)}
+                    >
+                        {tag.tagName}
+                    </button>
+                ))}
+            </div>
 
-      <label>Сезони:</label>
-      <select
-        multiple
-        value={formData.seasonIDs.map(id => id.toString())}
-        onChange={e => handleMultiSelectChange('seasonIDs', e.target.selectedOptions)}
-      >
-        {seasons.map(season => (
-          <option key={season.id} value={season.id}>
-            {season.seasonName}
-          </option>
-        ))}
-      </select>
+            {/* Центр: Вибрані елементи одягу */}
+            <div className="selected-items">
+                <h3>Selected Items</h3>
+                <div className="scroll-box">
+                    {formData.clothingItemIDs.length === 0 && <p>Немає вибраних речей</p>}
+                    {formData.clothingItemIDs.map(id => {
+                        const item = clothingItems.find(ci => ci.id === id);
+                        return item ? (
+                            <div key={id} className="selected-item item-card">
+                                <div className="item-content">
+                                    <img src={item.imageURL} alt={item.name} className="item-image" />
+                                    <div className="item-name">{item.name}</div>
+                                </div>
+                                <button type="button" onClick={() => removeClothingItem(id)}>🗑</button>
+                            </div>
+                        ) : null;
+                    })}
+                </div>
+                <button type="submit" className="submit-btn">
+                    {outfitId ? 'Оновити аутфіт' : 'Створити аутфіт'}
+                </button>
+            </div>
 
-      <label>Елементи одягу:</label>
-      <select
-        multiple
-        value={formData.clothingItemIDs.map(id => id.toString())}
-        onChange={e => handleMultiSelectChange('clothingItemIDs', e.target.selectedOptions)}
-      >
-        {clothingItems.map(item => (
-          <option key={item.id} value={item.id}>
-            {item.name}
-          </option>
-        ))}
-      </select>
-
-      <br />
-      <button type="submit">Створити</button>
-    </form>
-  );
+            {/* Права частина: Всі речі користувача */}
+            <div className="clothing-list">
+                <h3>All Clothing Items</h3>
+                <div className="grid-box">
+                    {filteredItems.map(item => (
+                        <div
+                            key={item.id}
+                            className={`clothing-item item-card ${formData.clothingItemIDs.includes(item.id) ? 'selected' : ''}`}
+                            onClick={() => toggleId('clothingItemIDs', item.id)}
+                            style={{ cursor: 'pointer' }}
+                        >
+                            <div className="item-content">
+                                <img src={item.imageURL} alt={item.name} className="item-image" />
+                                <div className="item-name">{item.name}</div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </form>
+    );
 }
