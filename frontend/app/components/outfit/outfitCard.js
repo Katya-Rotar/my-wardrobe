@@ -7,7 +7,7 @@ const OutfitCard = ({ outfit }) => {
     <div className={styles.card}>
       <h3>
         <Link href={`/outfit/${outfit.id}`}>
-          Outfit #{outfit.id}
+          Outfit
         </Link>
       </h3>
       <div className={styles.items}>

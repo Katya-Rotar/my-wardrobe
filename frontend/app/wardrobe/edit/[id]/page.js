@@ -47,7 +47,6 @@ export default function EditItemPage() {
 
   const [selectedPhoto, setSelectedPhoto] = useState(null);
 
-  // Fetch initial data
   useEffect(() => {
     async function fetchInitialData() {
       try {
@@ -75,7 +74,6 @@ export default function EditItemPage() {
         setSelectedTemp(tempRes.data.find((t) => t.id === fetchedItem.temperatureSuitabilityID));
         setSelectedPhoto(fetchedItem.imageURL);
 
-        // Fetch types separately once category is set
         const typeRes = await api.get(`/type/by-category/${fetchedItem.categoryID}`);
         setTypes(typeRes.data);
         setSelectedType(typeRes.data.find((t) => t.id === fetchedItem.typeID));
@@ -131,88 +129,88 @@ export default function EditItemPage() {
     }
   };
 
-  const renderButtons = (items, selectedItem, onSelect) =>
-    items.map((item) => (
-      <button
-        key={item.id}
-        type="button"
-        className={`white-btn ${selectedItem?.id === item.id ? "active" : ""}`}
-        onClick={() => onSelect(item)}
-      >
-        {item.name}
-      </button>
-    ));
+  const renderButtons = (items, selectedItem, onSelect, labelKey) =>
+      items.map((item) => (
+          <button
+              key={item.id}
+              type="button"
+              className={`white-btn ${selectedItem?.id === item.id ? "active" : ""}`}
+              onClick={() => onSelect(item)}
+          >
+            {item[labelKey]}
+          </button>
+      ));
 
   if (!item) return <div>Loading...</div>;
 
   return (
-    <div className="container">
-      <h1 className="title">Edit Item</h1>
-      <form className="content" onSubmit={handleSubmit}>
-        <div className="photo-section">
-          <div className="photo-box">
-            {selectedPhoto ? (
-              <img src={selectedPhoto} alt="Selected" className="uploaded-photo" />
-            ) : (
-              <label className="add-photo-btn">
-                <span className="icon">⬆</span> Upload new photo
-                <input type="file" accept="image/*" onChange={handlePhotoUpload} hidden />
-              </label>
-            )}
-          </div>
-          <button type="submit" className="black-btn">Save</button>
-        </div>
-
-        <div className="form-section">
-          <div className="input-group">
-            <label>Name</label>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+      <div className="container">
+        <h1 className="title">Edit Item</h1>
+        <form className="content" onSubmit={handleSubmit}>
+          <div className="photo-section">
+            <div className="photo-box">
+              {selectedPhoto ? (
+                  <img src={selectedPhoto} alt="Selected" className="uploaded-photo" />
+              ) : (
+                  <label className="add-photo-btn">
+                    <span className="icon">⬆</span> Upload new photo
+                    <input type="file" accept="image/*" onChange={handlePhotoUpload} hidden />
+                  </label>
+              )}
+            </div>
+            <button type="submit" className="black-btn">Save</button>
           </div>
 
-          <div className="input-group">
-            <label>Color</label>
-            <select value={color} onChange={(e) => setColor(e.target.value)}>
-              <option value="">Select color</option>
-              <option value="Red">Red</option>
-              <option value="Blue">Blue</option>
-              <option value="Green">Green</option>
-              <option value="Black">Black</option>
-              <option value="White">White</option>
-            </select>
-          </div>
+          <div className="form-section">
+            <div className="input-group">
+              <label>Name</label>
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+            </div>
 
-          <div className="input-group">
-            <label>Category</label>
-            <div className="btn-group">
-              {renderButtons(categories, selectedCategory, setSelectedCategory)}
+            <div className="input-group">
+              <label>Color</label>
+              <select value={color} onChange={(e) => setColor(e.target.value)}>
+                <option value="">Select color</option>
+                <option value="Red">Red</option>
+                <option value="Blue">Blue</option>
+                <option value="Green">Green</option>
+                <option value="Black">Black</option>
+                <option value="White">White</option>
+              </select>
+            </div>
+
+            <div className="input-group">
+              <label>Category</label>
+              <div className="btn-group">
+                {renderButtons(categories, selectedCategory, setSelectedCategory, "categoryName")}
+              </div>
+            </div>
+
+            <div className="input-group">
+              <label>Type</label>
+              <div className="btn-group">
+                {renderButtons(types, selectedType, setSelectedType, "typeName")}
+              </div>
+            </div>
+
+            <div className="input-group">
+              <label>Style</label>
+              <div className="btn-group">{renderButtons(styles, selectedStyle, setSelectedStyle, "styleName")}</div>
+            </div>
+
+            <div className="input-group">
+              <label>Season</label>
+              <div className="btn-group">{renderButtons(seasons, selectedSeason, setSelectedSeason, "seasonName")}</div>
+            </div>
+
+            <div className="input-group">
+              <label>Temperature Suitability</label>
+              <div className="btn-group btn-group-large">
+                {renderButtons(temps, selectedTemp, setSelectedTemp, "temperatureSuitabilityName")}
+              </div>
             </div>
           </div>
-
-          <div className="input-group">
-            <label>Type</label>
-            <div className="btn-group">
-              {renderButtons(types, selectedType, setSelectedType)}
-            </div>
-          </div>
-
-          <div className="input-group">
-            <label>Style</label>
-            <div className="btn-group">{renderButtons(styles, selectedStyle, setSelectedStyle)}</div>
-          </div>
-
-          <div className="input-group">
-            <label>Season</label>
-            <div className="btn-group">{renderButtons(seasons, selectedSeason, setSelectedSeason)}</div>
-          </div>
-
-          <div className="input-group">
-            <label>Temperature Suitability</label>
-            <div className="btn-group btn-group-large">
-              {renderButtons(temps, selectedTemp, setSelectedTemp)}
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
+        </form>
+      </div>
   );
 }
